@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { Row, Col, Card, Button } from 'react-bootstrap';
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { Row, Col, Card, Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const Home = ({ marketplace, nft }) => {
   const [loading, setLoading] = useState(true);
@@ -43,10 +44,49 @@ const Home = ({ marketplace, nft }) => {
   };
 
   const buyMarketItem = async (item) => {
-    await (
-      await marketplace.purchaseItem(item.itemId, { value: item.totalPrice })
-    ).wait();
-    loadMarketplaceItems();
+    try {
+      let id = toast.loading("transaction started", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+
+      await (
+        await marketplace.purchaseItem(item.itemId, { value: item.totalPrice })
+      ).wait();
+
+      toast.update(id, {
+        render: "Buying NFT successful",
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        type: "success",
+        isLoading: false,
+      });
+      loadMarketplaceItems();
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Some error occured while buying Nft", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
   };
 
   useEffect(() => {
@@ -54,7 +94,7 @@ const Home = ({ marketplace, nft }) => {
   }, []);
   if (loading)
     return (
-      <main style={{ padding: '1rem 0' }}>
+      <main style={{ padding: "1rem 0" }}>
         <h2>Loading...</h2>
       </main>
     );
@@ -88,7 +128,7 @@ const Home = ({ marketplace, nft }) => {
           </Row>
         </div>
       ) : (
-        <main style={{ padding: '1rem 0' }}>
+        <main style={{ padding: "1rem 0" }}>
           <h2>No listed assets</h2>
         </main>
       )}

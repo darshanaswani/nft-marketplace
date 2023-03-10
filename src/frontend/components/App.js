@@ -11,6 +11,8 @@ import NFTAddress from "../contractsData/NFT-address.json";
 import { useState } from "react";
 import { ethers } from "ethers";
 import { Spinner } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "./App.css";
 
@@ -108,6 +110,7 @@ function App() {
           )}
         </div>
       </div>
+      <ToastContainer />
     </BrowserRouter>
   );
 }

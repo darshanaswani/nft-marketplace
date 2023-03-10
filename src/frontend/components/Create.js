@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { Row, Form, Button } from "react-bootstrap";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const projectId = process.env.REACT_APP_PROJECT_ID;
 const projectSecretKey = process.env.REACT_APP_PROJECT_KEY;
@@ -29,6 +30,17 @@ const Create = ({ marketplace, nft }) => {
 
     if (typeof file !== "undefined") {
       try {
+        toast.dismiss();
+        let toastId = toast.loading("uploading image to ipfs node...", {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
         const formData = new FormData();
         formData.append("file", file);
         const resFile = await axios({
@@ -47,22 +59,93 @@ const Create = ({ marketplace, nft }) => {
         // console.log(result);
 
         setImage(ImgHash);
+        toast.update(toastId, {
+          render: "Image Uploading Completed",
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          type: "success",
+          isLoading: false,
+        });
+
         // setImage(`https://we-moon.infura-ipfs.io/ipfs/${result.path}`);
       } catch (error) {
+        toast.dismiss();
+        toast.error("Error in uploading image", {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
         console.log("ipfs image upload error: ", error);
       }
     }
   };
   const createNFT = async () => {
-    if (!image || !price || !name || !description) return;
+    if (!image || !price || !name || !description) {
+      toast.error("Fill the remaining property", {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      return;
+    }
     try {
       console.log(image);
+      const id = toast.loading("Creating NFT...", {
+        position: "bottom-right",
+        autoClose: 6000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
       const result = await client.add(
         JSON.stringify({ image, price, name, description })
       );
 
-      mintThenList(result);
+      await mintThenList(result);
+      toast.update(id, {
+        render: "Completed",
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        type: "success",
+        isLoading: false,
+      });
     } catch (error) {
+      toast.dismiss();
+      toast.error(`Error: ${error.message}`, {
+        position: "bottom-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
       console.log("ipfs uri upload error: ", error);
     }
   };
