@@ -46,6 +46,7 @@ export default function MyPurchases({ marketplace, nft, account }) {
   };
   useEffect(() => {
     loadPurchasedItems();
+    // eslint-disable-next-line
   }, []);
   if (loading)
     return (

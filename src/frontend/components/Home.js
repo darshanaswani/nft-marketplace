@@ -91,6 +91,7 @@ const Home = ({ marketplace, nft }) => {
 
   useEffect(() => {
     loadMarketplaceItems();
+    // eslint-disable-next-line
   }, []);
   if (loading)
     return (
