@@ -41,6 +41,7 @@ function App() {
       setAccount(accounts[0]);
       await web3Handler();
     });
+    console.log(signer);
     loadContracts(signer);
   };
 
